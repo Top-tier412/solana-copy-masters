@@ -143,112 +143,39 @@ const MasterDetail: React.FC = () => {
       <main className="flex-1 bg-background">
         <div className="container mx-auto py-8 px-4">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-            {/* Master Info Section - 4/5 width */}
+            {/* Left Section (4/5 width) with Vertical ResizablePanelGroup */}
             <div className="md:col-span-4">
               <ResizablePanelGroup direction="vertical">
-                {/* Top Section - Master Stats */}
-                <ResizablePanel defaultSize={30} minSize={20}>
+                {/* Top Section - 3D Visualization */}
+                <ResizablePanel defaultSize={40} minSize={20}>
                   <div className="h-full rounded-lg border bg-card p-6">
                     <div className="flex justify-between items-start mb-6">
                       <div>
                         <div className="flex items-center gap-2">
-                          <h1 className="text-2xl font-bold">Wallet Analysis</h1>
-                          <div 
-                            className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground"
-                            onClick={copyToClipboard}
-                          >
-                            <span className="text-sm mr-1">{address}</span>
-                            {copiedAddress ? (
-                              <CopyCheck className="h-4 w-4 text-green-500" />
-                            ) : (
-                              <Copy className="h-4 w-4" />
-                            )}
-                          </div>
+                          <h2 className="text-xl font-bold">Transaction Visualization</h2>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          Showing detailed analytics for this wallet
+                          3D visualization of transaction flow
                         </p>
-                      </div>
-                      
-                      <div className="flex items-center">
-                        <div className="text-right mr-4">
-                          <p className="text-sm text-muted-foreground">Last Updated</p>
-                          <p className="text-sm font-medium">
-                            {master?.lastUpdated 
-                              ? formatDistanceToNow(new Date(master.lastUpdated), { addSuffix: true })
-                              : "Never"
-                            }
-                          </p>
-                        </div>
-                        <Button 
-                          onClick={handleUpdate}
-                          disabled={isUpdating}
-                        >
-                          {isUpdating ? (
-                            <>
-                              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                              Updating...
-                            </>
-                          ) : (
-                            <>
-                              <RefreshCw className="mr-2 h-4 w-4" />
-                              Update
-                            </>
-                          )}
-                        </Button>
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <StatsCard 
-                        title="Total PNL (30d)"
-                        value={formatPnl(master?.totalPnl)}
-                        isPositive={master?.totalPnl ? master.totalPnl >= 0 : false}
-                      />
-                      <StatsCard 
-                        title="Unrealized PNL (30d)"
-                        value={formatPnl(master?.unrealizedPnl)}
-                        isPositive={master?.unrealizedPnl ? master.unrealizedPnl >= 0 : false}
-                      />
-                      <StatsCard 
-                        title="Win Rate"
-                        value={formatWinRate(master?.winRate)}
-                        isPositive={master?.winRate ? master.winRate > 50 : false}
-                      />
-                      <StatsCard 
-                        title="Win Streak"
-                        value={master?.winStreak?.toString() || "0"}
-                        isPositive={master?.winStreak ? master.winStreak > 0 : false}
-                      />
-                      <StatsCard 
-                        title="Trade Frequency"
-                        value={master?.tradeFrequency || "Unknown"}
-                      />
-                      <StatsCard 
-                        title="Avg. Holding Time"
-                        value={master?.avgHoldingTime || "Unknown"}
-                      />
-                    </div>
-                  </div>
-                </ResizablePanel>
-                
-                {/* Middle Section - D3 Visualization */}
-                <ResizablePanel defaultSize={30} minSize={20}>
-                  <div 
-                    ref={vizRef}
-                    className="h-full rounded-lg border bg-card p-6 flex items-center justify-center"
-                  >
-                    <div className="text-center">
-                      <p className="text-lg mb-4">3D Transaction Visualization</p>
-                      <p className="text-muted-foreground text-sm">
-                        Loading visualization...
-                      </p>
+                    <div 
+                      ref={vizRef}
+                      className="h-[calc(100%-3rem)] rounded-lg border bg-muted/20 flex items-center justify-center"
+                    >
+                      <div className="text-center">
+                        <p className="text-lg mb-4">3D Transaction Visualization</p>
+                        <p className="text-muted-foreground text-sm">
+                          Loading visualization...
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </ResizablePanel>
                 
                 {/* Bottom Section - Trade History */}
-                <ResizablePanel defaultSize={40} minSize={20}>
+                <ResizablePanel defaultSize={60} minSize={20}>
                   <div className="h-full rounded-lg border bg-card p-6">
                     <h2 className="text-xl font-bold mb-4">Trade History</h2>
                     {trades.length > 0 ? (
@@ -267,6 +194,113 @@ const MasterDetail: React.FC = () => {
             
             {/* Right Sidebar - 1/5 width */}
             <div className="md:col-span-1">
+              {/* Master Details Card */}
+              <div className="rounded-lg border bg-card p-6 mb-6">
+                <div className="flex justify-between items-start mb-4">
+                  <h2 className="font-semibold">Wallet Details</h2>
+                  <Button 
+                    onClick={handleUpdate}
+                    size="sm"
+                    disabled={isUpdating}
+                    variant="outline"
+                    className="h-8"
+                  >
+                    {isUpdating ? (
+                      <>
+                        <RefreshCw className="mr-1 h-3 w-3 animate-spin" />
+                        Updating
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="mr-1 h-3 w-3" />
+                        Update
+                      </>
+                    )}
+                  </Button>
+                </div>
+                
+                <div className="mb-2">
+                  <div className="flex items-center gap-1 mb-1">
+                    <p className="text-xs text-muted-foreground">Address</p>
+                    <div 
+                      className="cursor-pointer text-xs hover:text-foreground ml-auto"
+                      onClick={copyToClipboard}
+                    >
+                      {copiedAddress ? (
+                        <CopyCheck className="h-3 w-3 text-green-500" />
+                      ) : (
+                        <Copy className="h-3 w-3 text-muted-foreground" />
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-xs font-medium truncate">{address}</p>
+                </div>
+                
+                <div className="text-xs text-muted-foreground mt-1 mb-3">
+                  Last updated: {master?.lastUpdated 
+                    ? formatDistanceToNow(new Date(master.lastUpdated), { addSuffix: true })
+                    : "Never"
+                  }
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="bg-muted/50 rounded-lg p-3">
+                    <p className="text-xs text-muted-foreground">Total PNL (30d)</p>
+                    <p className={cn(
+                      "text-sm font-bold",
+                      master?.totalPnl !== undefined && (master.totalPnl >= 0 ? "text-green-500" : "text-red-500")
+                    )}>
+                      {formatPnl(master?.totalPnl)}
+                    </p>
+                  </div>
+                  
+                  <div className="bg-muted/50 rounded-lg p-3">
+                    <p className="text-xs text-muted-foreground">Unrealized PNL (30d)</p>
+                    <p className={cn(
+                      "text-sm font-bold",
+                      master?.unrealizedPnl !== undefined && (master.unrealizedPnl >= 0 ? "text-green-500" : "text-red-500")
+                    )}>
+                      {formatPnl(master?.unrealizedPnl)}
+                    </p>
+                  </div>
+                  
+                  <div className="bg-muted/50 rounded-lg p-3">
+                    <p className="text-xs text-muted-foreground">Win Rate</p>
+                    <p className={cn(
+                      "text-sm font-bold",
+                      master?.winRate !== undefined && (master.winRate > 50 ? "text-green-500" : "text-red-500")
+                    )}>
+                      {formatWinRate(master?.winRate)}
+                    </p>
+                  </div>
+                  
+                  <div className="bg-muted/50 rounded-lg p-3">
+                    <p className="text-xs text-muted-foreground">Win Streak</p>
+                    <p className={cn(
+                      "text-sm font-bold",
+                      master?.winStreak !== undefined && (master.winStreak > 0 ? "text-green-500" : "text-red-500")
+                    )}>
+                      {master?.winStreak?.toString() || "0"}
+                    </p>
+                  </div>
+                  
+                  <div className="bg-muted/50 rounded-lg p-3">
+                    <p className="text-xs text-muted-foreground">Trade Frequency</p>
+                    <p className="text-sm font-bold">
+                      {master?.tradeFrequency || "Unknown"}
+                    </p>
+                  </div>
+                  
+                  <div className="bg-muted/50 rounded-lg p-3">
+                    <p className="text-xs text-muted-foreground">Avg. Holding Time</p>
+                    <p className="text-sm font-bold">
+                      {master?.avgHoldingTime || "Unknown"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Recent Activity Card */}
               <div className="rounded-lg border bg-card p-6">
                 <h2 className="font-semibold mb-4">Recent Activity</h2>
                 <div className="space-y-4">

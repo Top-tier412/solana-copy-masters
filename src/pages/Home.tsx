@@ -1,20 +1,36 @@
 
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, ChevronRight, TrendingUp, History, LineChart } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 const Home = () => {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const [walletAddress, setWalletAddress] = useState("");
   
   React.useEffect(() => {
     if (!isAuthenticated) {
       navigate('/');
     }
   }, [isAuthenticated, navigate]);
+  
+  const handleAddressSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!walletAddress.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid wallet address",
+        variant: "destructive",
+      });
+      return;
+    }
+    navigate(`/masters/${walletAddress}`);
+  };
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -37,6 +53,22 @@ const Home = () => {
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Your advanced platform for analyzing and learning from top Solana traders
             </p>
+            
+            <form 
+              onSubmit={handleAddressSubmit}
+              className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto mt-8"
+            >
+              <Input
+                placeholder="Enter wallet address to analyze"
+                value={walletAddress}
+                onChange={(e) => setWalletAddress(e.target.value)}
+                className="flex-1"
+              />
+              <Button type="submit">
+                Analyze Wallet
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </Button>
+            </form>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
