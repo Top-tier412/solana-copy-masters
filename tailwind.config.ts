@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -52,6 +53,12 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				solana: {
+					purple: '#9945FF',
+					cyan: '#14F195',
+					black: '#131314',
+					darkgray: '#1C1C1F',
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -84,11 +91,26 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-glow': {
+					'0%, 100%': { 
+						opacity: '1',
+						boxShadow: '0 0 10px rgba(153, 69, 255, 0.7)'
+					},
+					'50%': { 
+						opacity: '0.7',
+						boxShadow: '0 0 25px rgba(153, 69, 255, 1)'
+					},
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-glow': 'pulse-glow 2s infinite ease-in-out',
+			},
+			backgroundImage: {
+				'solana-gradient': 'linear-gradient(to right, #9945FF, #14F195)',
+				'crypto-chart': "url('/src/assets/crypto-chart-bg.jpg')",
 			}
 		}
 	},
