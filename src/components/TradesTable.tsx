@@ -29,9 +29,12 @@ const TradesTable: React.FC<TradesTableProps> = ({ trades }) => {
   };
 
   const formatTokenAmount = (value: number, token: string) => {
+    // Fix: Ensure maximumFractionDigits is within the valid range (0-20)
+    const fractionDigits = token === 'BONK' ? 0 : 4;
+    
     return new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: token === 'BONK' ? 0 : 4
+      minimumFractionDigits: Math.min(fractionDigits, 20),
+      maximumFractionDigits: Math.min(fractionDigits, 20)
     }).format(value);
   };
 
