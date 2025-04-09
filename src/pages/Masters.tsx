@@ -105,7 +105,7 @@ const Masters: React.FC = () => {
                     Analyzing...
                   </>
                 ) : (
-                  'Start Analysis'
+                  masters.length > 0 ? 'Update' : 'Start Analysis'
                 )}
               </Button>
             </div>
